@@ -24,6 +24,7 @@ class LocationResource extends Resource
             'phone_number' => $this->phone_number,
             'created_by' => $this->created_by,
             'updated_by' => $this->updated_by,
+            'account_name' => $this->account->name
         ];
     }
     public function with($request) {

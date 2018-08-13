@@ -28,6 +28,7 @@ class CompanyResource extends Resource
             'is_enable' => $this->is_enable,
             'created_by'=>$this->created_by,
             'updated_by'=>$this->updated_by,
+            'account_name'=>$this->account ? $this->account->name : '',
         ];
     }
     public function with($request) {

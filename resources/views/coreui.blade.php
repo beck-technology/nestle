@@ -9,7 +9,7 @@
     <title>Laravel - CoreUI Example</title>
 
     <link href="{{ mix('css/app.css') }}" rel="stylesheet">
-
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDuQ_K591SigdfN15fkRli-zjvFHuNXKgM&libraries=places"></script>
     <script>
         window.Laravel = {!! json_encode([
 			'csrfToken' => csrf_token(),
@@ -40,6 +40,7 @@
 <body class="app header-fixed sidebar-fixed aside-menu-fixed aside-menu-hidden">
 
 <div id="app"></div>
+<script src="//unpkg.com/jquery@2.1.4/dist/jquery.min.js"></script>
 <script src="{{ mix('js/app.js') }}"></script>
 </body>
 </html>

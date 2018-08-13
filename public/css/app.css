@@ -18162,3 +18162,35 @@ li.breadcrumb-item > .active {
   content: "\F067";
 }
 
+.open .dropdown-menu {
+  display: block;
+}
+
+.company-collapse .card-header .btn {
+  margin-top: 0;
+  text-align: left;
+  position: relative;
+}
+
+.company-collapse .card-header .btn:before {
+  content: "\E615";
+  font-family: 'simple-line-icons';
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  padding-right: 10px;
+}
+
+.company-collapse .card-header .btn.collapsed:before {
+  content: "\E095";
+}
+
+.export {
+  float: right;
+}
+

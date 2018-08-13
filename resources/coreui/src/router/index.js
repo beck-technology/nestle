@@ -72,6 +72,10 @@ import SpareTypeList from '../views/spareType/List'
 import ModelTypeForm from '../views/modelType/Form'
 import ModelTypeList from '../views/modelType/List'
 
+// Views - Company
+import CompanyForm from '../views/company/Form'
+import CompanyList from '../views/company/List'
+
 
 
 
@@ -463,7 +467,33 @@ const router = new Router({
 						}
 					]
 				},
-			
+				//Companies
+				{
+					path: 'companies',
+					redirect: '/companies',
+					name: 'Company List',
+					component: {
+						render(c) {
+							return c('router-view')
+						}
+					},
+					children: [{
+						path: '/companies',
+						name: 'Company List',
+						component: CompanyList
+						},
+						{	
+							path: '/company/create',
+							name: 'Add Company',
+							component: CompanyForm
+						},
+						{
+							path: '/company/:id',
+							name: 'Edit Company',
+							component: CompanyForm
+						},	
+					]
+				},
 			]
 		},
 		{

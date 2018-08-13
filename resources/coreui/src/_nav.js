@@ -30,6 +30,11 @@ export default {
 					url: '/roleTypes',
 					// icon: 'icon-puzzle'
 				},
+				{
+					name: 'Companies',
+					url: '/companies',
+					// icon: 'icon-puzzle'
+				},
 			]
 		},
 		{
