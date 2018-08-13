@@ -34,10 +34,9 @@
                             <div class="card-body text-center">
                                 <div>
                                     <h2>Sign up</h2>
-                                    <p></p>
-                                    <router-link :to="{ name: 'Account'}">
-                                        <button type="button" class="btn btn-primary active mt-3">Register Now!</button>
-                                    </router-link>
+                                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt
+                                        ut labore et dolore magna aliqua.</p>
+                                    <button type="button" class="btn btn-primary active mt-3">Register Now!</button>
                                 </div>
                             </div>
                         </div>
@@ -57,14 +56,14 @@
                     email: "",
                     password: ""
                 }
-
+               
             }
         },
 
         created() {
         },
-        computed: {
-            counter: function () {
+         computed: {
+            counter: function() {
                 return this.$store.getters.counter
             }
         },
@@ -76,7 +75,6 @@
                         (response) => {
                             console.log(response)
                             this.$store.commit('changeUser', response.data.user)
-                            this.$store.commit('changeToken', response.data.access_token)
                             this.$router.push('/dashboard')
                             this.$http.defaults.headers.common["Authorization"] = `Bearer ${response.data.access_token}`
                         }
@@ -86,7 +84,7 @@
                             console.log(error)
                             this.$swal({
                                 title: "",
-                                text: "Login Credentials Invalid",
+                                text: "IDかパスワードが違います。",
                                 type: "warning",
                                 confirmButtonText: "OK"
                             });

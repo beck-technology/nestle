@@ -5,30 +5,25 @@
                 <form enctype="multipart/form-data" autocomplete='off' @submit.prevent="submitForm">
                     <div class="card border-0">
                         <div class="form-group form-actions">
-                            <div class="form-group form-actions">
-                                <router-link :to="{ name: 'Company List'}">
-                                    <button type="button" class="btn btn-sm btn-warning pull-right">Cancel</button>
-                                </router-link>
-                                <button type="button" @click.prevent="submit" style="margin-right:10px" class="btn btn-sm btn-primary pull-right">Submit</button>
-                            </div>
+                            <router-link :to="{ name: 'Company List'}">
+                                <button type="button" class="btn btn-sm btn-warning pull-right">Cancel</button>
+                            </router-link>
+                            <button type="submit" style="margin-right:10px" class="btn btn-sm btn-primary pull-right">Submit</button>
                         </div>
                         <div class="card-body">
                             <div class="row">
-                                <div class="form-group col-sm-4">
-                                    <b-form-fieldset label="Company Name *">
-                                        <b-form-input type="text" :class="errors.has('name') ? 'form-control is-invalid':'form-control'" v-validate="'required'"
-                                            name="name" v-model="company.name" placeholder="Please enter company name"></b-form-input>
-                                    </b-form-fieldset>
+                                <div class="form-group col-sm-6">
+                                    <input type="checkbox" value="1" v-model="company.is_customer" name="is_customer" checked disabled v-show="false">
+                                    <TextInput fieldName="name" vValidate="required|min:2" v-model="company.name" />
                                 </div>
-                                <div class="form-group col-sm-4">
-                                    <b-form-fieldset label="Website">
-                                        <b-form-input type="text" v-model="company.website" placeholder="ex.www.website.com"></b-form-input>
-                                    </b-form-fieldset>
+                                <div class="form-group col-sm-6">
+                                    <TextInput fieldName="website" v-model="company.website" />
                                 </div>
-                                <div class="form-group col-sm-4">
-                                    <label for="">Company Type *</label>
-                                    <select class="form-control" :class="errors.has('type') ? 'form-control is-invalid':'form-control'" v-validate="'required'"
-                                        name="type" v-model="company.type">
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-sm-6">
+                                    <label for="">Company Type</label>
+                                    <select class="form-control" v-model="company.type">
                                         <option value="0">Select Type</option>
                                         <option value="Distributor">Distributor</option>
                                         <option value="Customer">Customer</option>
@@ -36,34 +31,59 @@
                                         <option value="Manufacturer">Manufacturer</option>
                                     </select>
                                 </div>
-                            </div>
-                            <div class="row">
-                                <div class="form-group col-sm-4">
-                                    <b-form-fieldset label="Primary Address">
-                                        <b-form-input type="text" v-model="company.address" placeholder="Enter Your address"></b-form-input>
-                                    </b-form-fieldset>
-
-                                </div>
-                                <div class="form-group col-sm-4">
-                                    <b-form-fieldset label="post Code">
-                                        <b-form-input type="text" v-model="company.post_code" placeholder="Please enter your post code"></b-form-input>
-                                    </b-form-fieldset>
-                                </div>
-                                <div class="form-group col-sm-4">
-                                    <b-form-fieldset label="Phone Number">
-                                        <b-form-input type="text" v-model="company.phone_number" placeholder="phone number"></b-form-input>
-                                    </b-form-fieldset>
+                                <div class="form-group col-sm-6">
+                                    <label for="">Account</label>
+                                    <select class="form-control" v-model="company.account_id" vValidate="required">
+                                        <option value="">Select Accounts</option>
+                                        <option v-for="account in accounts" v-bind:key="account.id" v-bind:value="account.id">{{ account.name }}</option>
+                                    </select>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="form-group col-sm-6">
-                                    <label for="">Upload Logo</label>
-                                    <picture-input ref="pictureInput" width="200" height="200" margin-left="0" accept="image/jpeg,image/png" size="100" button-class="btn"
-                                        :custom-strings="{
-                                        upload: '<h1>Bummer!</h1>',
-                                        drag: 'Drag a 😺 GIF or GTFO'
-                                    }" @change="onChange">
-                                    </picture-input>
+                                    <label for="">Primary Address</label>
+                                    <vue-google-autocomplete ref="address" id="map" classname="form-control" :placeholder="company.address" :country="['nz', 'au']"
+                                        v-on:placechanged="getAddressData">
+                                        ></vue-google-autocomplete>
+                                </div>
+                                <div class="form-group col-sm-6">
+                                    <TextInput fieldName="post_code" v-model="company.post_code" />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-sm-6">
+                                    <TextInput fieldName="phone_number" v-model="company.phone_number" />
+                                </div>
+                                <div class="form-group col-sm-6">
+                                    <label for="">Parent</label>
+                                    <select class="form-control" v-model="company.is_parent" vValidate="required">
+                                        <option value="0">No</option>
+                                        <option value="1">Yes</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-sm-6">
+                                    <label for="">Enable</label>
+                                    <select class="form-control" v-model="company.is_enable" vValidate="required">
+                                        <option value="0">No</option>
+                                        <option value="1">Yes</option>
+                                    </select>
+                                </div>
+                                <div class="form-group col-sm-6">
+                                    
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-sm-6">
+                                    <img :src="userImage" class="img-fluid img-thumbnail" style="height: 200px" v-show="image!=null">
+                                    <img src="/img/company.png" class="img-fluid img-thumbnail" style="height: 200px" v-show="image==null">
+                                    <div class="col-md-12 mb-3">
+                                        <label for="">image</label>
+                                        <input type="file" ref="files" placeholder="Spare image" :class="{'form-control': true,'is-invalid': errors.first('image')}"
+                                               v-on:change="handleFilesUpload" name="image" v-validate="!edit ?'': ''">
+                                        <div class="invalid-feedback" v-show="errors.first('image')">{{ errors.first('image')  }}</div>
+                                    </div>
                                 </div>
                             </div>
                             <!-- {{company}} {{edit}} -->
@@ -72,218 +92,364 @@
                 </form>
             </div>
         </div>
+        {{contacts}}
         <div :hidden="!edit" class="col-sm-12">
-            <div class="card">
-                <div class="card-body">
-                    <div class="card-header">
-                        <router-link :to="{ path: `/user/${$route.params.id}/create`, params: $route.params.id}">
-                            <i class="fa fa-plus fa-lg pull-right" title="Add Contact" style="font-size:20px;  color: black;"></i>
-                        </router-link>
-                        <br>
-                    </div>
-                    <div class="table-responsive">
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th scope="col">ID</th>
-                                    <th scope="col">Name</th>
-                                    <th scope="col">User Name</th>
-                                    <th scope="col">Phone Number</th>
-                                    <th scope="col">Email</th>
-                                    <!-- <th scope="col">Created By</th>
-                                    <th scope="col">Updated By</th> -->
-                                    <th scope="col">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr v-for="user in users" v-bind:key="user.id">
-                                    <td>{{ user.id }}</td>
-                                    <td>{{ user.last_name +' , '+ user.first_name }}</td>
-                                    <td>{{ user.username }}</td>
-                                    <td>{{ user.phone_number }}</td>
-                                    <td>{{ user.email }}</td>
-                                    <!-- <td>{{ user.created_by }}</td>
-                                    <td>{{ user.updated_by }}</td> -->
-                                    <td>
-                                        <router-link :to="{ path: `/user/${user.id}/edit`}">
-                                            <i class="fa fa-edit fa-lg" title="Edit Contact" style="font-size:20px;  color: black;"></i>
-                                        </router-link>
-                                        <!-- <button @click="deleteContact(contact.user_id)" class="btn btn-danger">Delete</button> -->
-                                        <router-link :to="{ path:`/company/${company.id}`}">
-                                            <span v-on:click="eraseContact(user.id)">
-                                                <i class="fa fa-trash fa-lg" title="Delete Contact" style="font-size:20px;  color: black;"></i>
-                                            </span>
-                                        </router-link>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-            <div class="card">
-                <div class="card-header">
-                    <router-link :to="{ path: `/location/${$route.params.id}/create`, params: $route.params.id}">
-                        <i class="fa fa-plus fa-lg pull-right" title="Add Location" style="font-size:20px;  color: black;"></i>
-                    </router-link>
-                    <br>
-                </div>
-                <div class="table-responsive">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th scope="col">ID</th>
-                                <th scope="col">Address</th>
-                                <th scope="col">Post Code</th>
-                                <th scope="col">Phone Number</th>
-                                <!-- <th scope="col">Created By</th>
-                                <th scope="col">Updated By</th> -->
-                                <th scope="col">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr v-for="location in locations" v-bind:key="location.id">
-                                <td>{{ location.id }}</td>
-                                <td>{{ location.address }}</td>
-                                <td>{{ location.post_code }}</td>
-                                <td>{{ location.phone_number }}</td>
-                                <!-- <td>{{ location.created_by }}</td>
-                                <td>{{ location.updated_by }}</td> -->
-                                <td>
-                                    <router-link :to="{ path: `/location/${location.id}`}">
-                                        <i class="fa fa-edit fa-lg" title="Edit Location" style="font-size:20px;  color: black;"></i>
-                                    </router-link>
-                                    <!-- <button @click="deleteContact(contact.user_id)" class="btn btn-danger">Delete</button> -->
-                                    <router-link :to="{ path: `/company/${company.id}`}">
-                                        <span v-on:click="eraseLocation(location.id)">
-                                            <i class="fa fa-trash fa-lg" title="Delete Location" style="font-size:20px;  color: black;"></i>
-                                        </span>
-                                    </router-link>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+            <div role="tablist" class="company-collapse">
+                <b-card no-body class="mb-1">
+                  <b-card-header header-tag="header" class="p-1" role="tab">
+                    <b-btn block href="#" v-b-toggle.accordion1 variant="info">Accounts</b-btn>
+                  </b-card-header>
+                  <b-collapse id="accordion1" visible accordion="my-accordion" role="tabpanel">
+                    <b-card-body>
+                        <datatable v-bind="tblData1">
+                            <table-navigation :selection='tblData1.selection' :query='tblData1.query' :createRoute="'Add Account'" :editRoute="'Edit Account'" :tableClass="'tblData1'" :deleteUrl="'/api/account/deletetin'">
+                            </table-navigation>
+                        </datatable>
+                    </b-card-body>
+                  </b-collapse>
+                </b-card>
+                <b-card no-body class="mb-1">
+                  <b-card-header header-tag="header" class="p-1" role="tab">
+                    <b-btn block href="#" v-b-toggle.accordion2 variant="info">Locations</b-btn>
+                  </b-card-header>
+                  <b-collapse id="accordion2" accordion="my-accordion" role="tabpanel">
+                    <b-card-body>
+                      <p class="card-text">
+                        <datatable v-bind="tblData2">
+                            <table-navigation :selection='tblData2.selection' :query='tblData2.query' :createRoute="'Add Location'" :editRoute="'Edit Location'" :tableClass="'tblData2'" :deleteUrl="'/api/location/deletetin'">
+                            </table-navigation>
+                        </datatable>
+                      </p>
+                    </b-card-body>
+                  </b-collapse>
+                </b-card>
+              </div>
         </div>
-        <!-- {{users}} -->
-      
-        
-        </div>
+    </div>
 </template>
 
 <script>
-    import PictureInput from 'vue-picture-input'
+    import Vue from 'vue'
+    import axios from 'axios';
+    import TextInput from '../partials/TextInput';
+    import VueGoogleAutocomplete from 'vue-google-autocomplete'
+    import VeeValidate from 'vee-validate'
+    import Datatable from 'vue2-datatable-component'
+    import components from '../comps'
+    import TableNavigation from '../partials/TableNavigation'
+
+    Vue.use(VeeValidate);
+    Vue.use(Datatable);
     export default {
-        name: "forms",
+        name: 'forms',
         components: {
-            PictureInput
+            TextInput,
+            VueGoogleAutocomplete,
+            TableNavigation
         },
-        data() {
-            return {
-                users: [],
-                locations: [],
-                company: {
-                    is_enable: 1
+        data:() => ({
+            tblData1: {
+                tblClass: 'table-responsive table-bordered tblData1',
+                tblStyle: 'color: #666',
+                tblId: 'dataTable1',
+                pageSizeOptions: [5, 10, 15, 20],
+                columns: (() => {
+                    const cols = [
+                        { title: 'Name', field: 'name', thComp: 'FilterTh', sortable: false, tdStyle: { fontStyle: 'italic' } },
+                        { title: 'Enable', field: 'is_enable', visible: true, sortable: true, thComp: '', tdComp: 'ShowBooleanValueTd' }
+                    ]
+                    const groupsDef = {
+                        Normal: ['email', 'name', 'website', 'address', 'post_code', 'phone_number'],
+                        Sortable: [],
+                        Extra: []
+                    }
+                    return cols.map(col => {
+                            Object.keys(groupsDef).forEach(groupName => {
+                                if (groupsDef[groupName].includes(col.title)) {
+                                    col.group = groupName
+                                }
+                            })
+                        return col
+                    })
+                })(),
+                data: [],
+                total: 0,
+                selection: [],
+                query: {},
+                xprops: {
+                    eventbus: new Vue()
+                }
+            },
+            tblData2: {
+                supportBackup: false,
+                supportNested: false,
+                tblClass: 'table-responsive table-bordered tblData2',
+                tblStyle: 'color: #666',
+                pageSizeOptions: [5, 10, 15, 20],
+                columns: (() => {
+                    const cols = [
+                        { title: 'Account Name', field: 'account_name', sortable: false, thComp: 'FilterTh' },
+                        { title: 'Address', field: 'address', sortable: true, thComp: 'FilterTh' },
+                        { title: 'Post code', field: 'post_code', sortable: true, thComp: 'FilterTh' },
+                        { title: 'Phone', field: 'phone_number', sortable: true, thComp: 'FilterTh' }
+                    ]
+                    const groupsDef = {
+                        Normal: ['email', 'name', 'website', 'address', 'post_code', 'phone_number'],
+                        Sortable: [],
+                        Extra: []
+                    }
+                    return cols.map(col => {
+                            Object.keys(groupsDef).forEach(groupName => {
+                                if (groupsDef[groupName].includes(col.title)) {
+                                    col.group = groupName
+                                }
+                            })
+                        return col
+                    })
+                })(),
+                data: [],
+                total: 10,
+                selection: [],
+                query: {},
+                xprops: {
+                    eventbus: new Vue()
+                }
+            },
+            selected_account: null,
+            accounts: [],
+            companies: [],
+            distributors: [],
+            contacts: [],
+            locations: [],
+            company: {
+                id: '',
+                account_id: '',
+                name: '',
+                website: '',
+                address: '',
+                post_code: '',
+                type: '0',
+                distributor: '0',
+                is_customer: 0,
+                phone_number: '',
+                image: null,
+                is_parent: 0,
+                is_enable: 1,
+                selectedFile: null
+            },
+            name: '',
+            website: '',
+            address: '',
+            post_code: '',
+            phone_number: '',
+            distributor: '',
+            is_customer: 0,
+            image: null,
+            editable: false,
+            has_company: false,
+            id: '',
+            uploadedImage: null,
+            isLoading: false,
+            edit: false
+        }),
+        watch: {
+            has_company(value) {
+                if (value == true) {
+                    if (!this.editable)
+                        this.is_customer = 1;
+                }
+            },
+            'tblData1.query': {
+                handler () {
+                    this.getAccounts();
                 },
-                edit: false
-            };
+                deep: true
+            },'tblData2.query': {
+                handler () {
+                    this.getLocations();
+                },
+                deep: true
+            },
         },
         created() {
-            console.log(this.$store.state.user);
-            if (!this.$store.state.user) this.$router.push("/login");
-            this.company.account_id = this.$store.state.user.account_id;
+            // window.localStorage.setItem("authUser",JSON.stringify(response.data))
+//            let authUser = JSON.parse(window.localStorage.getItem('authUser'))
 
-            // this.fetchContactByCompany()
+//            console.log('authUser', (authUser.user.account_id))
+            //this.company.account_id = authUser.user.account_id
+
+
+            this.fetchCompaniesBytype();
+            this.fetchContactByCompany();
+            this.fetchLocationByCompany();
+            var self = this;
+            setTimeout(function() {
+                self.getLocations();
+                self.getAccounts();
+            }, 500);
             if (this.$route.params.id) {
-                this.edit = true;
-                //for edit by id
-                this.fetchById(this.$route.params.id);
-                console.log("look for id", this.$route.params.id);
+                axios.get(`/api/company/${this.$route.params.id}`, { headers: this.$headers })
+                    .then(response => {
+                        this.company = response.data.data
+                        console.log("company", this.company)
+                        this.placeChanged()
+                    }).catch(error => {
+                    });
+                this.edit = true
+            }
+        },
+        computed: {
+            userImage() {
+                if (this.uploadedImage) {
+                    return this.uploadedImage;
+                }
+                if (this.edit && this.company.image != '') {
+                    this.image = '/img/' + this.company.image;
+                    return '/img/' + this.company.image;
+                } else {
+                    return "/storage/" + this.image;
+                }
             }
         },
         methods: {
-            onChange(image) {
-                console.log('New picture selected!')
-                if (image) {
-                    console.log('Picture loaded.')
-                    this.company.image = image
-                    console.log("image preview", this.company.image)
-                } else {
-                    console.log('FileReader API not supported: use the <form>, Luke!')
-                }
-            },
-            submit() {
-                this.$validator.validate().then(result => {
-                    if (result)
-                        this.submitForm()
-                })
-            },
-            fetchContactByCompany() {
-                this.$http.get(`/api/users/${this.$route.params.id}/company`)
+            fetchCompaniesBytype() {
+                this.isLoading = true
+                axios.get("/api/distributors", { headers: this.$headers })
                     .then(response => {
-                        this.users = response.data.users;
-                        console.log("users", this.users)
+                        this.distributors = response.data.Companies;
+                        console.log("distributors", this.distributors)
                     })
             },
-            //sweet alert
-            showAlert() {
-                this.$swal('Company Added Successfully');
+            fetchContactByCompany() {
+                this.isLoading = true
+                axios.get(`/api/contacts/${this.$route.params.id}/company`, { headers: this.$headers })
+                    .then(response => {
+                        this.contacts = response.data.contacts;
+                        console.log("contacts", this.contacts)
+                    })
             },
-            submitForm() {
-                if (this.edit) {
-                    this.company.updated_by = this.$store.state.user.id;
-                    this.company.account_id = this.$store.state.user.account_id;
-                    this.$http
-                        .put(`/api/company`, this.company)
-                        .then(response => {
-                            this.$router.push("/companies/");
-                        })
-                        .catch(error => {
-                            this.$setErrorsFromResponse(err.response.data);
-                            this.$emit("error", err.response.data);
-                        });
-                } else {
-                    this.company.created_by = this.$store.state.user.id;
-                    this.$http
-                        .post(`/api/company`, this.company)
-                        .then(response => {
-                            this.$router.push("/companies/");
-                        })
-                        .catch(error => {
-                            this.$setErrorsFromResponse(err.response.data);
-                            this.$emit("error", err.response.data);
-                        });
-                }
+            fetchLocationByCompany() {
+                this.isLoading = true
+                axios.get(`/api/company/${this.$route.params.id}/locations`, { headers: this.$headers })
+                    .then(response => {
+                        console.log("locations result", response.data)
+                        this.locations = response.data.data;
+                        console.log("locations", this.locations)
+                    })
             },
-            fetchById(id) {
-                this.$http.get(`/api/company/${id}`).then(response => {
-                    this.company = response.data.data;
-                    this.users = response.data.data.user;
-                    this.locations = response.data.data.location;
-                    console.log("company", this.company);
-                    console.log("user", this.users);
-                    console.log("location", this.locations);
-                });
-            },
-            eraseLocation(id) {
+            deleteContact(id) {
                 if (confirm("Are You Sure?")) {
-                    this.$http.delete(`/api/location/${id}`)
-                        .then(response => {
-                            alert("Location Removed");
-                            this.fetchById(this.$route.params.id);
-                        })
-                }
-            },
-            eraseContact(id) {
-                if (confirm("Are You Sure?")) {
-                    this.$http.delete(`/api/user/${id}`)
+                    axios.delete(`/api/contact-delete/${id}`, { headers: this.$headers })
                         .then(response => {
                             alert("Contact Removed");
-                            this.fetchById(this.$route.params.id);
+                            this.fetchContactByCompany();
                         })
                 }
             },
+            deleteLocation(id) {
+                if (confirm("Are You Sure?")) {
+                    axios.delete(`/api/location-delete/${id}`, { headers: this.$headers })
+                        .then(response => {
+                            alert("location Removed");
+                            this.fetchLocationByCompany();
+                        })
+                }
+            },
+            placeChanged() {
+                this.$refs.address.update(this.address);
+            },
+            getAddressData(addressData, placeResultData, id) {
+                this.company.address = addressData.route + ", " + addressData.country;
+                this.company.post_code = addressData.postal_code;
+            },
+            submitForm() {
+                this.$validator.validate().then(result => {
+                    if (!result) {
+                        return false;
+                    }
+                    else {
+                        let formData = new FormData();
+                        if (this.image) {
+                            formData.append('image', this.image, this.image.name);
+                        }
+                        formData.append('account_id', this.company.account_id);
+                        formData.append('name', this.company.name);
+                        formData.append('website', this.company.website);
+                        formData.append('address', this.company.address);
+                        formData.append('post_code', this.company.post_code);
+                        formData.append('type', this.company.type);
+                        formData.append('phone_number', this.company.phone_number);
+                        formData.append('is_enable', this.company.is_enable);
+                        formData.append('is_parent', this.company.is_parent);
+                        this.company.image = this.image;
+                        if (this.edit) {
+                            formData.append('id', this.company.id);
+                            formData.append('_method', 'PUT');
+                            axios.post("/api/company", formData, { headers: this.$headers })
+                                .then(response => {
+                                    this.$router.push('/companies')
+                                })
+                                .catch(error => {
+                                    this.$setErrorsFromResponse(err.response.data);
+                                    this.$emit('error', err.response.data);
+                                });
+
+                        } else {
+                            axios.post("/api/company", formData, { headers: this.$headers })
+                                .then(response => {
+                                    this.$router.push('/companies')
+                                })
+                                .catch(error => {
+                                    this.$setErrorsFromResponse(err.response.data);
+                                    this.$emit('error', err.response.data);
+                                });
+                        }
+
+                    }
+                });
+            },
+            handleFilesUpload($event) {
+                let uploadedFiles = this.$refs.files.files;
+
+                var files = $event.target.files || $event.dataTransfer.files;
+
+                for (var i = 0; i < uploadedFiles.length; i++) {
+                    this.image = uploadedFiles[i];
+                    this.createImage(this.image, uploadedFiles[i]);
+                }
+            },
+            createImage(item, file) {
+                var image = new Image();
+                var reader = new FileReader();
+
+                reader.onload = (e) => {
+                    this.uploadedImage = e.target.result;
+                };
+
+                reader.readAsDataURL(file);
+            },
+            removeImage: function (item) {
+                item.image = false;
+            },
+            getAccounts() {
+                axios.get('/api/accounts', {
+                    params:  {...this.tblData1.query },
+                        headers: this.$headers
+                    }).then(response => {
+                        this.tblData1.data = response.data.accounts;
+                        this.tblData1.total = response.data.total;
+                        this.accounts = response.data.data;
+                });
+            },
+            getLocations() {
+                axios.get('/api/locations', {
+                    params:  {...this.tblData2.query },
+                        headers: this.$headers
+                    }).then(response => {
+                    this.tblData2.data = response.data.locations;
+                    this.tblData2.total = response.data.total;
+                });
+            }
         }
-    };
+    }
 </script>

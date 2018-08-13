@@ -13,13 +13,20 @@ class LocationController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        // Get locations
-        $locations = Location::orderBy('created_at', 'desc')->paginate(15);
+        $params = $request->all();
+        $locations = Location::filter($params)->with('account')->orderBy($request->sort ?? "id", $request->order ?? "DESC")
+            ->offset($request->offset ?? 0)
+            ->limit($request->limit ?? 1000)->get();
+        $totalItems = Location::filter($params)->count();
 
-        // Return collection of locations as a resource
-        return LocationResource::collection($locations);
+        // Return collection of companies as a resource
+        $locationsCollection = LocationResource::collection($locations);
+        $dataResponse = new \stdClass();
+        $dataResponse->locations = $locationsCollection;
+        $dataResponse->total = $totalItems;
+        return response()->json($dataResponse);
     }
     /**
      * Store a newly created resource in storage.
@@ -59,7 +66,6 @@ class LocationController extends Controller
         // Return single locations as a resource
         return new LocationResource($location);
     }
-   
     /**
      * Remove the specified resource from storage.
      *

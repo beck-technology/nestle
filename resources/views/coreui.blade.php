@@ -6,11 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>Jware</title>
-      <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDuQ_K591SigdfN15fkRli-zjvFHuNXKgM&libraries=places"></script>
-    <link href="{{ mix('css/app.css') }}" rel="stylesheet">
+    <title>Laravel - CoreUI Example</title>
 
+    <link href="{{ mix('css/app.css') }}" rel="stylesheet">
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDuQ_K591SigdfN15fkRli-zjvFHuNXKgM&libraries=places"></script>
     <script>
         window.Laravel = {!! json_encode([
 			'csrfToken' => csrf_token(),
@@ -41,6 +40,7 @@
 <body class="app header-fixed sidebar-fixed aside-menu-fixed aside-menu-hidden">
 
 <div id="app"></div>
+<script src="//unpkg.com/jquery@2.1.4/dist/jquery.min.js"></script>
 <script src="{{ mix('js/app.js') }}"></script>
 </body>
 </html>

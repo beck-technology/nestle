@@ -16,9 +16,7 @@ class CompanyResource extends Resource
     {
         return [
             'id' => $this->id,
-            'account' => $this->account,
-            'user' => $this->user,
-            'location'=>$this->location,
+            'account_id' => $this->account_id,
             'name' => $this->name,
             'website' => $this->website,
             'address' => $this->address,
@@ -30,6 +28,7 @@ class CompanyResource extends Resource
             'is_enable' => $this->is_enable,
             'created_by'=>$this->created_by,
             'updated_by'=>$this->updated_by,
+            'account_name'=>$this->account ? $this->account->name : '',
         ];
     }
     public function with($request) {

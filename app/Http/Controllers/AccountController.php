@@ -14,13 +14,21 @@ class AccountController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
+        $params = $request->all();
         // Get Accounts
-        $accounts = Account::orderBy('created_at', 'desc')->paginate(15);
+        $accounts = Account::filter($params)->orderBy($request->sort ?? "id", $request->order ?? "DESC")
+            ->offset($request->offset ?? 0)
+            ->limit($request->limit ?? 1000)->get();
+        $totalItems = Account::filter($params)->count();
 
         // Return collection of Accounts as a resource
-        return AccountResource::collection($accounts);
+        $accountsCollection = AccountResource::collection($accounts);
+        $dataResponse = new \stdClass();
+        $dataResponse->accounts = $accountsCollection;
+        $dataResponse->total = $totalItems;
+        return response()->json($dataResponse);
     }
     /**
      * Store a newly created resource in storage.

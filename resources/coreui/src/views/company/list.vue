@@ -1,121 +1,134 @@
 <template>
-	<div class="animated fadeIn">
-		<div class="row">
-			<!--/.col-->
-			<div class="col-lg-12">
-				<router-link :to="{ name: 'Add Company'}">
-					<button class="btn btn-warning">Add</button>
-				</router-link>
-				<b-card header="<i class='fa fa-align-justify'></i> Striped Table">
-					<table class="table table-striped">
-						<thead>
-							<tr>
-								<th>Account Name</th>
-								<th>Company Name</th>
-								<th>Website</th>
-								<th>Address</th>
-								<th>Post Code</th>
-								<th>Type</th>
-								<th>Phone Number</th>
-								<!-- <th>Created by</th>
-								<th>Updated By</th> -->
-								<th>Actions</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr v-for="company in companies" v-bind:key="company.id">
-								<td>{{ company.account.name }}</td>
-								<td>{{ company.name }}</td>
-								<td>{{ company.website }}</td>
-								<td>{{ company.address }}</td>
-								<td>{{ company.post_code }}</td>
-								<td>{{ company.type }}</td>
-								<td>{{ company.phone_number }}</td>
-								<!-- <td>{{ company.created_by }}</td>
-								<td>{{ company.updated_by }}</td> -->
-								<td>
-									<router-link :to="{ path: `/company/${company.id}`}">
-										<b-button type="reset" size="sm" variant="danger">
-											<i class="icon-trash"></i> Edit</b-button>
-									</router-link>
-									<b-button @click.prevent="erase(company.id)" type="reset" size="sm" variant="danger">
-										<i class="icon-trash"></i> Delete</b-button>
-								</td>
-							</tr>
-						</tbody>
-					</table>
-					<ul class="pagination">
-						<li class="page-item">
-							<a class="page-link" href="#">Prev</a>
-						</li>
-						<li class="page-item active">
-							<a class="page-link" href="#">1</a>
-						</li>
-						<li class="page-item">
-							<a class="page-link" href="#">2</a>
-						</li>
-						<li class="page-item">
-							<a class="page-link" href="#">3</a>
-						</li>
-						<li class="page-item">
-							<a class="page-link" href="#">4</a>
-						</li>
-						<li class="page-item">
-							<a class="page-link" href="#">Next</a>
-						</li>
-					</ul>
-				</b-card>
-			</div>
-			<!--/.col-->
-		</div>
-		<!--/.row-->
-	</div>
+    <div class="animated fadeIn">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="card border-0">
+                    <!-- <div class="card-header">
+                        Companies
+                    </div> -->
+                    <div class="card-block">
+                        <div class="table-container">
+                            <div class="table-container">
+                                <datatable v-bind="tblData1">
+                                    <table-navigation :selection='tblData1.selection' :query='tblData1.query' :createRoute="'Add Company'" :editRoute="'Edit Company'" :tableClass="'tblData1'" :deleteUrl="'/api/company/deletetin'">
+                                    </table-navigation>
+                                </datatable>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-block">
+                        <div class="table-container">
+                            <div class="table-container">
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </template>
-
 <script>
-	export default {
-		name: 'list',
-		data() {
-			return {
-				companies: []
-			}
-		},
-		created() {
-			console.log(this.$store.state.user)
-			if (!this.$store.state.user)
-				this.$router.push('/login')
-			this.fetch();
-		},
-		methods: {
-			showAlert(){
-            // Use sweetalret2
-            this.$swal('Company Deleted Successfully');
+    import Vue from 'vue'
+    import Datatable from 'vue2-datatable-component'
+    import Axios from 'axios'
+    import components from '../comps'
+    import TableNavigation from '../partials/TableNavigation'
+
+    Vue.use(Datatable);
+    export default {
+        components: {
+            ...components,
+            TableNavigation
+        },
+        name: 'CompanyList', // `name` is required as a recursive component
+            //props: ['row'], // from the parent FriendsTable (if exists)
+        data:() => ({
+            locations: [],
+            tblData1: {
+                tblClass: 'table-responsive table-bordered tblData1',
+                tblStyle: 'color: #666',
+                tblId: 'dataTable1',
+                pageSizeOptions: [5, 10, 15, 20],
+                columns: (() => {
+                    const cols = [
+                        { title: 'Account Name', field: 'account_name', thComp: 'FilterTh', sortable: false, tdStyle: { fontStyle: 'italic' } },
+                        { title: 'Company Name', field: 'name', thComp: 'FilterTh', sortable: true, tdStyle: { fontStyle: 'italic' }, tdComp: 'showCompanyEditLinkTd' },
+                        { title: 'Company Logo', field: 'image', visible: true, sortable: false, thComp: '', tdComp: 'ShowImageTd' },
+                        { title: 'Website', field: 'website', visible: true, sortable: true, thComp: 'FilterTh', tdComp: 'ShowLinkWebsiteTd' },
+                        { title: 'Address', field: 'address', visible: true, sortable: true, thComp: 'FilterTh' },
+                        { title: 'Post Code', field: 'post_code', visible: true, sortable: true, thComp: 'FilterTh' },
+                        { title: 'Company Type', field: 'type', visible: true, sortable: true, thComp: 'FilterTh' },
+                        { title: 'Phone Number', field: 'phone_number', visible: true, sortable: true, thComp: 'FilterTh' },
+                        { title: 'Parent company', field: 'is_parent', visible: true, sortable: true, thComp: '', tdComp: 'ShowBooleanValueTd' },
+                        { title: 'Enable', field: 'is_enable', visible: true, sortable: true, thComp: '', tdComp: 'ShowBooleanValueTd' }
+                    ]
+                    const groupsDef = {
+                        Normal: ['email', 'name', 'website', 'address', 'post_code', 'phone_number'],
+                        Sortable: [],
+                        Extra: []
+                    }
+                    return cols.map(col => {
+                            Object.keys(groupsDef).forEach(groupName => {
+                                if (groupsDef[groupName].includes(col.title)) {
+                                    col.group = groupName
+                                }
+                            })
+                        return col
+                    })
+                })(),
+                data: [],
+                total: 0,
+                selection: [],
+                query: {},
+                xprops: {
+                    eventbus: new Vue()
+                }
             },
-			fetch() {
-				this.$http.get(`/api/companies`,
-					{
-						headers: {
-							Authorization: `Bearer ${this.$store.state.token}`
-						}
-					})
-					.then(response => {
-						this.companies = response.data.data
-						this.users = response.data.data[0].user
-						console.log("companies", this.companies)
-						console.log("users", this.users)
-					})
-					.catch(err => console.log(err));
-			},
-			erase(id) {
-				if (confirm("Are You Sure?")) {
-					this.$http.delete(`/api/company/${id}`)
-					.then(response => {
-						alert("Removed");
-						this.fetch();
-					})
-					.catch(err => console.log(err));
-				}
-			}
-		}
-	}
+            tblData2: {}
+        }),
+        watch: {
+            'tblData1.query': {
+                handler () {
+                    this.handleQueryChange();
+                },
+                deep: true
+            }
+        },
+        created() {
+            var self = this;
+            setTimeout(function() {
+                self.getLocations();
+                self.handleQueryChange();
+            }, 1000);
+        },
+        methods: {
+            handleQueryChange () {
+                Axios.get('/api/companies', {
+                            params:  {...this.tblData1.query },
+                            headers: this.$headers
+                })
+                .then(response => {
+                    this.tblData1.data = response.data.companies;
+                    this.tblData1.total = response.data.total;
+                    
+                });
+
+            },
+            getLocations() {
+                Axios.get('/api/locations', {
+                    params:  {},
+                        headers: this.$headers
+                    }).then(response => {
+                        this.locations = response.data;
+                });
+            }
+        }
+    }
 </script>
+
+<style>
+    .w-240 {
+        width: 240px;
+    }
+</style>

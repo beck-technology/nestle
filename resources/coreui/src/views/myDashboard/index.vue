@@ -229,11 +229,6 @@
         components: {},
         data() {
             return {};
-        },
-        created() {
-            console.log(`Heeeeeee`, this.$store.state.user)
-            if(!this.$store.state.user)
-                this.$router.push('/login')
-        },
+        }
     };
 </script>

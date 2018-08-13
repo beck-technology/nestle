@@ -27,25 +27,10 @@ import Page404 from '../views/pages/Page404'
 import Page500 from '../views/pages/Page500'
 import Login from '../views/pages/Login'
 import Register from '../views/pages/Register'
-import Account from '../views/pages/Account'
-import Company from '../views/pages/Company'
 
 
 // Views - Dashboard
 import MyDashboard from '../views/myDashboard/index'
-
-// Views - Company
-import CompanyForm from '../views/company/Form'
-import CompanyList from '../views/company/List'
-
-// Views - User
-import UserForm from '../views/user/Form'
-import UserList from '../views/user/List'
-import NewUserForm from '../views/user/Forms'
-
-// Views - Location
-import LocationForm from '../views/location/Form'
-import LocationList from '../views/location/List'
 
 // Views - Job Stat
 import RoleTypeForm from '../views/roleType/Form'
@@ -87,6 +72,10 @@ import SpareTypeList from '../views/spareType/List'
 import ModelTypeForm from '../views/modelType/Form'
 import ModelTypeList from '../views/modelType/List'
 
+// Views - Company
+import CompanyForm from '../views/company/Form'
+import CompanyList from '../views/company/List'
+
 
 
 
@@ -109,10 +98,7 @@ const router = new Router({
 			children: [{
 					path: 'dashboard',
 					name: 'My-Dashboard',
-					component: MyDashboard,
-					meta: {
-						requireAuth: true
-					}
+					component: MyDashboard
 				},
 				{
 					path: 'charts',
@@ -168,117 +154,6 @@ const router = new Router({
 							name: 'Tables',
 							component: Tables
 						}
-					]
-				},
-				//Company
-				{
-					path: 'companies',
-					redirect: '/companies',
-					name: 'Companies',
-					component: {
-						render(c) {
-							return c('router-view')
-						}
-					},
-					children: [{
-						path: '/companies',
-						name: 'Company List',
-						component: CompanyList,
-						meta: {
-							requireAuth: true
-						}
-						},
-						
-						{	
-							path: '/company/create',
-							name: 'Add Company',
-							component: CompanyForm,
-							// meta: {
-							// 	requireAuth: true
-							// }
-						},
-						
-						{
-							path: '/company/:id',
-							name: 'Edit company',
-							component: CompanyForm,
-							// meta: {
-							// 	requireAuth: false
-							// }
-						},		
-					]
-				},
-				
-				//User
-				{
-					path: 'users',
-					redirect: '/users',
-					name: 'Contacts',
-					component: {
-						render(c) {
-							return c('router-view')
-						}
-					},
-					children: [{
-						path: '/users',
-						name: 'Contact List',
-						component: UserList,
-						meta: {
-								requireAuth: true
-							}
-						},
-						
-						{	
-							path: '/user/create',
-							name: 'Add Contact',
-							component: UserForm
-						},
-						
-						{
-							path: '/user/:id',
-							name: 'Edit User',
-							component: UserForm
-						},
-						//add user from company form
-						{
-							path: '/user/:id/create',
-							name: 'Add-Contact',
-							component: NewUserForm,
-						  },
-						  //edit user from company form
-						  {
-							path: '/user/:id/edit',
-							name: 'Edit-contact',
-							component: NewUserForm,
-						  },	
-					]
-				},
-				//Location
-				{
-					path: 'locations',
-					redirect: '/locations',
-					name: 'Locations',
-					component: {
-						render(c) {
-							return c('router-view')
-						}
-					},
-					children: [{
-						path: '/locations',
-						name: 'Location List',
-						component: LocationList
-						},	
-						{
-							path: '/location/:id/create',
-							name: 'Add Location',
-							component: LocationForm,
-						  },
-						
-						{
-							path: '/location/:id',
-							name: 'Edit Location',
-							component: LocationForm
-						},	
 					]
 				},
 				//job status
@@ -592,7 +467,33 @@ const router = new Router({
 						}
 					]
 				},
-			
+				//Companies
+				{
+					path: 'companies',
+					redirect: '/companies',
+					name: 'Company List',
+					component: {
+						render(c) {
+							return c('router-view')
+						}
+					},
+					children: [{
+						path: '/companies',
+						name: 'Company List',
+						component: CompanyList
+						},
+						{	
+							path: '/company/create',
+							name: 'Add Company',
+							component: CompanyForm
+						},
+						{
+							path: '/company/:id',
+							name: 'Edit Company',
+							component: CompanyForm
+						},	
+					]
+				},
 			]
 		},
 		{
@@ -617,34 +518,12 @@ const router = new Router({
 				{
 					path: 'login',
 					name: 'Login',
-					component: Login,
-					meta: {
-						requireAuth: false
-					}
+					component: Login
 				},
 				{
 					path: 'register',
 					name: 'Register',
-					component: Register,
-					meta: {
-						requireAuth: false
-					}
-				},
-				{
-					path: 'account',
-					name: 'Account',
-					component: Account,
-					meta: {
-						requireAuth: false
-					}
-				},
-				{
-					path: 'company',
-					name: 'Company',
-					component: Company,
-					meta: {
-						requireAuth: false
-					}
+					component: Register
 				}
 			]
 		}
